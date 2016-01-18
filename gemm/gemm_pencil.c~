@@ -1,0 +1,142 @@
+/* Need to create a single common 
+*  header file which defines required utility functions 	
+*  which helps in setting timers,dumping arrys to stdout etc...
+*/
+
+#define PENCIL_ARRAY static const __restrict  /* This line just for testing purpose. Need to remove it later. */
+#include "gemm_pencil.h"
+
+void summary_initialize_array(const int rowA, const int colA,
+			      const int rowB, const int colB,
+			      const int rowC, const int colC, 
+			      DATATYPE A[PENCIL_ARRAY rowA][colA],
+			      DATATYPE B[PENCIL_ARRAY rowB][colB],
+			      DATATYPE C[PENCIL_ARRAY rowC][colC],
+			      DATATYPE alpha[PENCIL_ARRAY 1],
+			      DATATYPE beta[PENCIL_ARRAY 1])
+{
+	/*
+	*	Summary function for initialize_array()
+	*/	
+	DEF(A);
+	DEF(B);
+	DEF(C);
+	DEF(alpha);
+	DEF(beta);
+}
+
+
+void initialize_array(const int rowA,const int colA,
+		      const int rowB,const int colB,
+		      const int rowC,const int colC, 
+		      DATATYPE A[PENCIL_ARRAY rowA][colA],
+		      DATATYPE B[PENCIL_ARRAY rowB][colB],
+		      DATATYPE C[PENCIL_ARRAY rowC][colC],
+		      DATATYPE alpha[PENCIL_ARRAY 1],
+		      DATATYPE beta[PENCIL_ARRAY 1])
+__attribute__( (ACCESS(summary_initialize_array)) )
+{
+	int i, j;
+  	for (i = 0; i < rowC; i++)
+    		for (j = 0; j < colC; j++)
+      			C[i][j] = ((DATATYPE) i*j) / DIV;
+  	for (i = 0; i < rowA; i++)
+    		for (j = 0; j < colA; j++)
+      			A[i][j] = ((DATATYPE) i*j) / DIV;
+  	for (i = 0; i < rowB; i++)
+    		for (j = 0; j < colB; j++)
+      			B[i][j] = ((DATATYPE) i*j) / DIV;
+	alpha[0]=1;
+	beta[0]=1;
+}
+
+void summary_print_array(int rowC,int colC,DATATYPE C[rowC][colC])
+{
+	/*
+	*	Summary function for print_array
+	*/
+	USE(C);
+}
+
+void print_array(int rowC,int colC,
+		 DATATYPE C[rowC][colC])
+__attribute__( (ACCESS(summary_print_array)) )
+{
+	int i, j;
+ 	for (i = 0; i < rowC; i++)
+  	{
+    		for (j = 0; j < colC; j++) {
+			fprintf (stderr, DATA_PRINTF_MODIFIER, C[i][j]);
+    		}
+  		printf("\n");
+  	}
+  	fprintf (stderr, "\n\n");
+}
+
+void summary_kernel_gemm(const int rowA, const int colA,
+			 const int rowB, const int colB,
+			 const int rowC, const int colC, 
+			 DATATYPE A[PENCIL_ARRAY rowA][colA],
+			 DATATYPE B[PENCIL_ARRAY rowB][colB],
+			 DATATYPE C[PENCIL_ARRAY rowC][colC],
+			 DATATYPE alpha[PENCIL_ARRAY 1],
+		      	 DATATYPE beta[PENCIL_ARRAY 1])
+{
+	int i;
+	for (i = 0; i < rowC; i++){
+    		for (int j = 0; j < colC; j++)
+      		{
+			USE(C[i][j]);
+			DEF(C[i][j]);
+			for (int k = 0; k < rowB; ++k)
+	  		{
+				USE(C[i][j]);
+				DEF(C[i][j]);
+				USE(A[i][k]);
+				USE(B[k][j]);
+				USE(alpha[0]);
+				USE(beta[0]);
+			}
+      		}
+	}	
+}
+
+
+void kernel_gemm(const int rowA,const int colA,
+		 const int rowB,const int colB,
+		 const int rowC,const int colC, 
+		 DATATYPE A[PENCIL_ARRAY rowA][colA],
+		 DATATYPE B[PENCIL_ARRAY rowB][colB],
+		 DATATYPE C[PENCIL_ARRAY rowC][colC],
+		 DATATYPE alpha[PENCIL_ARRAY 1],
+		 DATATYPE beta[PENCIL_ARRAY 1])
+__attribute__( (ACCESS(summary_kernel_gemm)) )
+{
+  int i;
+  /* C := alpha*A*B + beta*C */
+  #pragma pencil independent
+  for (i = 0; i < rowC; i++)
+    for (int j = 0; j < colC; j++)
+      {
+	C[i][j] *= beta[0];
+	for (int k = 0; k < rowB; ++k)
+	  C[i][j] += alpha[0] * A[i][k] * B[k][j];
+      }
+
+}
+
+
+
+int main()
+{
+	DATATYPE A[ROWA][COLA];
+	DATATYPE B[ROWB][COLB];
+	DATATYPE C[ROWC][COLC];
+	DATATYPE alpha[1];
+	DATATYPE beta[1];
+	initialize_array(ROWA,COLA,ROWB,COLB,ROWC,COLC,A,B,C,alpha,beta);
+	/* Call to set timer function goes here */
+	kernel_gemm(ROWA,COLA,ROWB,COLB,ROWC,COLC,A,B,C,alpha,beta);	
+	print_array(ROWC,COLC,C);
+	return 0;
+}

@@ -1,0 +1,39 @@
+
+	PENCIL BENCHMARKING VER 0.1
+
+	- To Run benchmarking codes, make sure include path is set properly. 
+	- It should point to all standard C libraries along with all PENCIL header files.
+	- You can view default include path by using INCLUDE_DIRS option for pencilcc.
+	- Commands to run benchmarks :
+		pencilcc <INCLUDE PATH IF REQD> FILENAME/S ../utilities/include/pencilbench.c -o outfile	
+
+	- Please use the provided template for writing benchmarks. You can find it at ./utilities
+
+	- SIDENOTE : PENCIL region must be annotated as shown below. (And not by using #pragma pencil{...} region)
+	
+	
+					      
+						      #pragma scop 
+						      {
+							....
+						      }
+						      #pragma endscop	
+
+
+	- It is also nice idea to compare sequential/ parallel execution. 	
+
+	- Sample output for gemm benchmark :looks like
+
+		$./test 
+
+ 		Problem Size : 
+ 		RowA = 2500, ColA = 2500, ColB : 2500
+ 		Kernel Start
+ 		kernel end
+ 		Execution time :10.814283 
+	
+	- .c = C File
+	  .pencil.c = <Only> PENCIL code 
+
+
+									
