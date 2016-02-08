@@ -1,27 +1,15 @@
-/**
- * This version is stamped on Apr. 14, 2015
- *
- * Contact:
- *   Louis-Noel Pouchet <pouchet.ohio-state.edu>
- *   Tomofumi Yuki <tomofumi.yuki.fr>
- *
- * Web address: http://pencilbench.sourceforge.net
- */
 /*
  * Polybench header for instrumentation.
  *
  * Programs must be compiled with `-I utilities utilities/pencilbench.c'
  *
- * Optionally, one can define:
- *
- * -DPENCILBENCH_TIME, to report the execution time,
- *   OR (exclusive):
- * -DPENCILBENCH_PAPI, to use PAPI H/W counters (defined in pencilbench.c)
- *
- *
- * See README or utilities/pencilbench.c for additional options.
+ * 
  *
  */
+
+#define PENCILBENCH_TIME 
+
+
 #ifndef PENCILBENCH_H
 # define PENCILBENCH_H
 
@@ -139,9 +127,9 @@ PENCILBENCH_PADDING_FACTOR]
 /* Macros to allocate heap arrays.
    Example:
    PENCILBENCH_ALLOC_2d_ARRAY(N, M, double) => allocates N x M x sizeof(double)
-					  and returns a pointer to the 2d array
+            and returns a pointer to the 2d array
  */
-# define PENCILBENCH_ALLOC_1D_ARRAY(n1, type)	\
+# define PENCILBENCH_ALLOC_1D_ARRAY(n1, type) \
   (type(*)[n1 + PENCILBENCH_PADDING_FACTOR])pencilbench_alloc_data (n1 + \
 PENCILBENCH_PADDING_FACTOR, sizeof(type))
 
@@ -150,7 +138,7 @@ PENCILBENCH_PADDING_FACTOR, sizeof(type))
 PENCILBENCH_PADDING_FACTOR])pencilbench_alloc_data ((n1 + \
 PENCILBENCH_PADDING_FACTOR) * (n2 + PENCILBENCH_PADDING_FACTOR), sizeof(type)) \
 
-# define PENCILBENCH_ALLOC_3D_ARRAY(n1, n2, n3, type)		\
+# define PENCILBENCH_ALLOC_3D_ARRAY(n1, n2, n3, type)   \
   (type(*)[n1 + PENCILBENCH_PADDING_FACTOR][n2 + PENCILBENCH_PADDING_FACTOR][n3 \
 + PENCILBENCH_PADDING_FACTOR])pencilbench_alloc_data ((n1 + \
 PENCILBENCH_PADDING_FACTOR) * (n2 + PENCILBENCH_PADDING_FACTOR) * (n3 + \
@@ -163,7 +151,7 @@ PENCILBENCH_PADDING_FACTOR])pencilbench_alloc_data ((n1 + \
 PENCILBENCH_PADDING_FACTOR) * (n2 + PENCILBENCH_PADDING_FACTOR) * (n3 + \
 PENCILBENCH_PADDING_FACTOR) * (n4 + PENCILBENCH_PADDING_FACTOR), sizeof(type)) \
 
-# define PENCILBENCH_ALLOC_5D_ARRAY(n1, n2, n3, n4, n5, type)		\
+# define PENCILBENCH_ALLOC_5D_ARRAY(n1, n2, n3, n4, n5, type)   \
   (type(*)[n1 + PENCILBENCH_PADDING_FACTOR][n2 + PENCILBENCH_PADDING_FACTOR][n3 \
 + PENCILBENCH_PADDING_FACTOR][n4 + PENCILBENCH_PADDING_FACTOR][n5 + \
 PENCILBENCH_PADDING_FACTOR])pencilbench_alloc_data ((n1 + \
@@ -173,7 +161,7 @@ PENCILBENCH_PADDING_FACTOR), sizeof(type))
 
 /* Macros for array declaration. */
 # ifndef PENCILBENCH_STACK_ARRAYS
-#  define PENCILBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1)		\
+#  define PENCILBENCH_1D_ARRAY_DECL(var, type, dim1, ddim1)   \
   type (PENCILBENCH_DECL_VAR(var)); \
   var = pencilbench_alloc_data (PENCILBENCH_C99_SELECT(dim1, \
 ddim1),sizeof(PENCILBENCH_DECL_VAR(var)));
@@ -227,7 +215,7 @@ dim5, ddim1, ddim2, ddim3, ddim4, ddim5);
 
 # endif
 
-/* Not found in PENCIL headers */
+/* Not in PENCIL headers */
 #define PENCIL_ARRAY static const restrict
 
 /* Dead-code elimination macros. Use argc/argv for the run-time check. */
@@ -252,8 +240,8 @@ dim5, ddim1, ddim2, ddim3, ddim4, ddim5);
 # define pencilbench_stop_instruments
 # define pencilbench_print_instruments
 
-/* Timing support. */
-# if defined(PENCILBENCH_TIME) || defined(PENCILBENCH_GFLOPS)
+/* Timing support. */ /* TODO: profiling in Gflops,... */ 
+/*# if defined(PENCILBENCH_TIME) || defined(PENCILBENCH_GFLOPS)
 #  undef pencilbench_start_instruments
 #  undef pencilbench_stop_instruments
 #  undef pencilbench_print_instruments
@@ -261,16 +249,17 @@ dim5, ddim1, ddim2, ddim3, ddim4, ddim5);
 #  define pencilbench_stop_instruments pencilbench_timer_stop();
 #  define pencilbench_print_instruments pencilbench_timer_print();
 extern double pencilbench_program_total_flops;
-extern void pencilbench_timer_start();
-extern void pencilbench_timer_stop();
-extern void pencilbench_timer_print();
-# endif
+extern double pencilbench_timer_start();
+extern double pencilbench_timer_stop();
+extern double pencilbench_timer_print();
+# endif */
 
-/* Function declaration. */
+
+ /* Function declaration. */ 
 # ifdef PENCILBENCH_TIME
-extern void pencilbench_timer_start();
-extern void pencilbench_timer_stop();
-extern void pencilbench_timer_print();
+extern double pencilbench_timer_start();
+extern double pencilbench_timer_stop();
+extern double pencilbench_timer_print();
 # endif
 
 /* Function prototypes. */

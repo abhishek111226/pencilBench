@@ -20,6 +20,14 @@ Platform Neutral Compute Intermediate Language
 
 - It is also nice idea to compare sequential/ parallel execution. 	
 
+- You can select dataset size by providing -D<DATA_SET_OPTION>
+  Where DATA_SET_OPTION from : 	
+	MINI_DATASET
+	SMALL_DATASET
+	STANDARD_DATASET (Default)
+	LARGE_DATASET
+	EXTRALARGE_DATASET
+
 - Sample output for gemm benchmark :
 
 	$./test 
