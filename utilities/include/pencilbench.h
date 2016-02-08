@@ -1,4 +1,31 @@
-#include<stdio.h>
+/**
+ * This version is stamped on Apr. 14, 2015
+ *
+ * Contact:
+ *   Louis-Noel Pouchet <pouchet.ohio-state.edu>
+ *   Tomofumi Yuki <tomofumi.yuki.fr>
+ *
+ * Web address: http://pencilbench.sourceforge.net
+ */
+/*
+ * Polybench header for instrumentation.
+ *
+ * Programs must be compiled with `-I utilities utilities/pencilbench.c'
+ *
+ * Optionally, one can define:
+ *
+ * -DPENCILBENCH_TIME, to report the execution time,
+ *   OR (exclusive):
+ * -DPENCILBENCH_PAPI, to use PAPI H/W counters (defined in pencilbench.c)
+ *
+ *
+ * See README or utilities/pencilbench.c for additional options.
+ *
+ */
+#ifndef PENCILBENCH_H
+# define PENCILBENCH_H
+
+#include <stdio.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -11,7 +38,7 @@
 #include <math.h>
 #include <features.h>
 #include <time.h>
-#include<pencil.h>
+#include <pencil.h>
 
 //#define PENCILBENCH_STACK_ARRAYS 1
 
@@ -31,9 +58,6 @@
 /* default: */
 #  define PENCILBENCH_C99_SELECT(x,y) x
 # endif
-
-/* Function prototypes. */
-extern void* pencilbench_alloc_data(unsigned long long int n, int elt_size);
 
 /* Macros to reference an array. Generic for heap and stack arrays
    (C99).  Each array dimensionality has his own macro, to be used at
@@ -206,9 +230,50 @@ dim5, ddim1, ddim2, ddim3, ddim4, ddim5);
 /* Not found in PENCIL headers */
 #define PENCIL_ARRAY static const restrict
 
+/* Dead-code elimination macros. Use argc/argv for the run-time check. */
+# ifndef PENCILBENCH_DUMP_ARRAYS
+#  define PENCILBENCH_DCE_ONLY_CODE    if (argc > 42 && ! strcmp(argv[0], ""))
+# else
+#  define PENCILBENCH_DCE_ONLY_CODE
+# endif
+
+#define PENCILBENCH_DUMP_TARGET stderr
+#define PENCILBENCH_DUMP_START    fprintf(PENCILBENCH_DUMP_TARGET, "==BEGIN DUMP_ARRAYS==\n")
+#define PENCILBENCH_DUMP_FINISH   fprintf(PENCILBENCH_DUMP_TARGET, "==END   DUMP_ARRAYS==\n")
+#define PENCILBENCH_DUMP_BEGIN(s) fprintf(PENCILBENCH_DUMP_TARGET, "begin dump: %s", s)
+#define PENCILBENCH_DUMP_END(s)   fprintf(PENCILBENCH_DUMP_TARGET, "\nend   dump: %s\n", s)
+
+# define pencilbench_prevent_dce(func)    \
+  PENCILBENCH_DCE_ONLY_CODE     \
+  func
+
+/* Performance-related instrumentation. See pencilbench.c */
+# define pencilbench_start_instruments
+# define pencilbench_stop_instruments
+# define pencilbench_print_instruments
+
 /* Timing support. */
+# if defined(PENCILBENCH_TIME) || defined(PENCILBENCH_GFLOPS)
+#  undef pencilbench_start_instruments
+#  undef pencilbench_stop_instruments
+#  undef pencilbench_print_instruments
+#  define pencilbench_start_instruments pencilbench_timer_start();
+#  define pencilbench_stop_instruments pencilbench_timer_stop();
+#  define pencilbench_print_instruments pencilbench_timer_print();
+extern double pencilbench_program_total_flops;
+extern void pencilbench_timer_start();
+extern void pencilbench_timer_stop();
+extern void pencilbench_timer_print();
+# endif
 
-double pencilbench_timer_start();
-double pencilbench_timer_stop();
-double pencilbench_timer_print();
+/* Function declaration. */
+# ifdef PENCILBENCH_TIME
+extern void pencilbench_timer_start();
+extern void pencilbench_timer_stop();
+extern void pencilbench_timer_print();
+# endif
 
+/* Function prototypes. */
+extern void* pencilbench_alloc_data(unsigned long long int n, int elt_size);
+
+#endif /* !PENCILBENCH_H */
