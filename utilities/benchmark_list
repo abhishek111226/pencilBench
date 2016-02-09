@@ -1,3 +1,2 @@
-/linear-algebra/kernels/gemver/gemver.c
-
-
+/gem/gem.pencil.cc
+/jacobi-1d/jacobi-1d.pencil.c
