@@ -1,27 +1,31 @@
 #include<pencil.h>
 #include"gemm.h"
 #include"../utilities/include/pencilbench.h"
-
-/* kernel function */
+/*
+ *	Main computational kernel. 
+ *
+ *	C = beta*C + alpha*A*B 
+ */
 void kernel_gemm(const int rowA,const int colA,
 		const int rowB,const int colB,
 		const int rowC,const int colC, 
-		DATATYPE PENCILBENCH_2D_ARG(A,rowA,colA,ROWA,COLA),
-		DATATYPE PENCILBENCH_2D_ARG(B,rowB,colB,ROWB,COLB),
-		DATATYPE PENCILBENCH_2D_ARG(C,rowC,colC,ROWC,COLC))
+		DATA_TYPE PENCILBENCH_2D_ARG(A,rowA,colA,ROWA,COLA),
+		DATA_TYPE PENCILBENCH_2D_ARG(B,rowB,colB,ROWB,COLB),
+		DATA_TYPE PENCILBENCH_2D_ARG(C,rowC,colC,ROWC,COLC))
 {
-	/* PENCIL Code  */
-	{	 
-		__pencil_kill(C);	
+
+	int i, j, k;
+
+	/* C := alpha*A*B + beta*C */
 #pragma pencil independent
-		for (int i = 0; i < rowC; ++i)
+	for (i = 0; i < rowA; i++)
 #pragma pencil independent
-			for (int j = 0; j < colC; ++j)
-			{
-				C[i][j] *= beta;
-#pragma pencil independent reduction(+: C[i][j])
-				for (int k = 0; k < rowB; ++k)
-					C[i][j] += alpha * A[i][k] * B[k][j];
-			}
-	}
+		for (j = 0; j < colA; j++)
+		{
+			C[i][j] *= beta;
+#pragma pencil independent (+ : C[i][j])
+			for (k = 0; k < colB; ++k)
+				C[i][j] += alpha * A[i][k] * B[k][j];
+		}
+
 }

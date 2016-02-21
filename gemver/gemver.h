@@ -1,47 +1,34 @@
-#ifndef TEMPLATE_H
-# define TEMPLATE_H
-#define DIV 1
-#define alpha 1
-#define beta 1
-#define ROWB COLA
-#define ROWC ROWA
-#define COLC COLB
+/* FIXME: Infinite Compilation Time */
+
+#ifndef GEMVER_H
+# define GEMVER_H
+
 /* Default to STANDARD_DATASET. */
 # if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
 #  define STANDARD_DATASET
 # endif
 
 /* Do not define anything if the user manually defines the size. */
-# if !defined(ROWA) && !defined(COLA) && !defined(COLB)
+# ifndef N
 /* Define the possible dataset sizes. */
 #  ifdef MINI_DATASET
-#   define ROWA 32
-#   define COLA 32
-#   define COLB 32
+#   define N 32
 #  endif
 
 #  ifdef SMALL_DATASET
-#   define ROWA 128
-#   define COLA 128
-#   define COLB 128
+#   define N 500
 #  endif
 
 #  ifdef STANDARD_DATASET /* Default if unspecified. */
-#   define ROWA 1024
-#   define COLA 1024
-#   define COLB 1024
+#   define N 4000
 #  endif
 
 #  ifdef LARGE_DATASET
-#   define ROWA 2000
-#   define COLA 2000
-#   define COLB 2000
+#   define N 8000
 #  endif
 
 #  ifdef EXTRALARGE_DATASET
-#   define ROWA 4000
-#   define COLA 4000
-#   define COLB 4000
+#   define N 100000
 #  endif
 # endif /* !N */
 
@@ -74,4 +61,4 @@
 # endif
 
 
-#endif /* !GEMM */
+#endif /* !GEMVER */
