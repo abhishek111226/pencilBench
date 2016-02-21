@@ -4,7 +4,7 @@
 /* Include benchmark-specific header. */
 #include "gemver.h"
 
-/* FIXME: Infinite Compilation Time */
+/* FIXME: Correctness review remaining */
 
 /* Kernel declaration	*/
 void kernel_gemver(int n,

@@ -1,4 +1,4 @@
-/* FIXME: Infinite Compilation Time */
+/* FIXME: Correctness review remaining */
 
 #ifndef GEMVER_H
 # define GEMVER_H

@@ -1,7 +1,7 @@
 #include"gemver.h"
 #include "../utilities/include/pencilbench.h"
 
-/* FIXME: Infinite Compilation Time */
+/* FIXME: Correctness review remaining */
 
 /* kernel function */
 void kernel_gemver (int n,DATA_TYPE alpha, DATA_TYPE beta,
